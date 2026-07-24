@@ -1,0 +1,11 @@
+{
+  "telegram_offset": 76503770,
+  "last_run": "2026-07-24T13:09:12.276494+00:00",
+  "pending": {
+    "item_id": 3,
+    "awaiting": "target",
+    "created": "2026-07-24T13:09:12.031269+00:00"
+  },
+  "proxy_requests_this_month": 0,
+  "proxy_month": null
+}

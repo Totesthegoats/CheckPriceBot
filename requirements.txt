@@ -1,0 +1,4 @@
+httpx[http2]==0.27.2
+selectolax==0.3.21
+matplotlib==3.9.2
+anthropic==0.34.2
