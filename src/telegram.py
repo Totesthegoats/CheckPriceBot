@@ -9,11 +9,27 @@ import httpx
 API_BASE = "https://api.telegram.org"
 
 
+def parse_chat_ids(raw: str) -> list[str]:
+    """TELEGRAM_CHAT_ID may be a single id or a comma-separated allow-list
+    shared by a household/group — everyone on it can issue commands and
+    receives notifications."""
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
 class TelegramClient:
     def __init__(self, token: str | None = None, chat_id: str | None = None) -> None:
         self.token = token or os.environ["TELEGRAM_BOT_TOKEN"]
-        self.chat_id = chat_id or os.environ["TELEGRAM_CHAT_ID"]
+        self.chat_ids = parse_chat_ids(chat_id or os.environ["TELEGRAM_CHAT_ID"])
+        self.chat_id = self.chat_ids[0]
         self._base = f"{API_BASE}/bot{self.token}"
+
+    def broadcast(self, text: str) -> None:
+        for cid in self.chat_ids:
+            self.send_message(text, chat_id=cid)
+
+    def broadcast_photo(self, photo_path: str, caption: str = "") -> None:
+        for cid in self.chat_ids:
+            self.send_photo(photo_path, caption=caption, chat_id=cid)
 
     def send_message(self, text: str, chat_id: str | None = None) -> None:
         with httpx.Client(timeout=20) as client:

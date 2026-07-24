@@ -17,7 +17,7 @@ NOTIFY_INLINE_LIMIT = 5
 
 
 def drain_commands(watchlist: dict, state: dict, fetcher: Fetcher, tg: TelegramClient) -> None:
-    chat_id = os.environ["TELEGRAM_CHAT_ID"]
+    allowed = set(tg.chat_ids)
     while True:
         updates = tg.get_updates(offset=state["telegram_offset"], timeout=0)
         if not updates:
@@ -27,11 +27,13 @@ def drain_commands(watchlist: dict, state: dict, fetcher: Fetcher, tg: TelegramC
             message = update.get("message")
             if not message:
                 continue
-            if str(message.get("chat", {}).get("id")) != str(chat_id):
+            sender_chat_id = str(message.get("chat", {}).get("id"))
+            if sender_chat_id not in allowed:
                 continue
             text = message.get("text")
             if not text:
                 continue
+            tg.chat_id = sender_chat_id  # reply to whoever actually sent this
             dispatch(text, watchlist, state, fetcher, tg)
 
 
@@ -61,7 +63,7 @@ def run_full_check(watchlist: dict, state: dict, fetcher: Fetcher, tg: TelegramC
             per_item = "\n".join(f"- {e.item['label']}" for e in outcome.events)
             body = f"{summary}\n{per_item}"
         tail = f"\n\n{checked} checked · {blocked} blocked · {failing} failing"
-        tg.send_message(body + tail)
+        tg.broadcast(body + tail)
 
     for item in outcome.ask_proxy:
         prompt_proxy_confirm(item, state, tg)
@@ -74,7 +76,7 @@ def run_full_check(watchlist: dict, state: dict, fetcher: Fetcher, tg: TelegramC
                 "awaiting": "price",
                 "created": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             }
-            tg.send_message(
+            tg.broadcast(
                 f"Couldn't find a price for {item['label']}. Reply with the price exactly as shown on the page."
             )
             break
@@ -82,7 +84,7 @@ def run_full_check(watchlist: dict, state: dict, fetcher: Fetcher, tg: TelegramC
     for item in watchlist["items"]:
         if should_send_auto_chart(item):
             path = render_chart(item)
-            tg.send_photo(path, caption=item["label"])
+            tg.broadcast_photo(path, caption=item["label"])
             item["last_chart_sent"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
             os.remove(path)
 
@@ -99,6 +101,7 @@ def main() -> None:
 
     try:
         drain_commands(watchlist, state, fetcher, tg)
+        tg.chat_id = tg.chat_ids[0]  # drain may have pointed this at a specific sender
         if args.mode == "full":
             run_full_check(watchlist, state, fetcher, tg)
     finally:

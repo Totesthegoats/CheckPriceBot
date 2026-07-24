@@ -18,6 +18,8 @@ https://api.telegram.org/bot<TOKEN>/getUpdates
 
 Find `message.chat.id` in the JSON response — that's your `TELEGRAM_CHAT_ID`.
 
+**Adding other people:** have each person message the bot once, find their `chat.id` the same way, then set `TELEGRAM_CHAT_ID` to a comma-separated list (e.g. `111111111,222222222`). Everyone on the list shares one watchlist — anyone can run any command, and everyone gets every notification (price drops, sale alerts, charts). There's no per-person ownership of items; it's meant for a household/shared use case, not separate private watchlists.
+
 ### 3. Add repo secrets
 
 In **Settings → Secrets and variables → Actions**, add:
@@ -25,13 +27,13 @@ In **Settings → Secrets and variables → Actions**, add:
 | Secret | Required | Purpose |
 |---|---|---|
 | `TELEGRAM_BOT_TOKEN` | yes | from BotFather |
-| `TELEGRAM_CHAT_ID` | yes | from step 2 — the bot ignores every other chat |
+| `TELEGRAM_CHAT_ID` | yes | from step 2 — one id, or a comma-separated list for multiple people. The bot ignores every other chat |
 | `ANTHROPIC_API_KEY` | no | enables the LLM price-extraction fallback |
 | `SCRAPERAPI_KEY` | no | enables the opt-in proxy fallback for blocked sites |
 
 ### 4. Enable Actions and let it run
 
-The workflow runs a full scrape once daily and a lightweight command drain three more times a day, so Telegram commands don't sit unacknowledged near Telegram's 24-hour `getUpdates` expiry. See `.github/workflows/monitor.yml`.
+The workflow runs a full scrape once daily and a lightweight command drain every 15 minutes, so the bot feels responsive — `/list`, `/add`, etc. get answered quickly — without hitting retailer sites more than once a day. Only the drain runs touch Telegram; the full scrape is the only step that fetches product pages. See `.github/workflows/monitor.yml`.
 
 ## Commands
 
@@ -54,7 +56,7 @@ Send these to your bot (see `src/commands.py:HELP_TEXT` / `/help`):
 ## Important caveats
 
 - **Scheduling is best-effort.** GitHub delays scheduled workflows under load — sometimes 30+ minutes. Fine for sale monitoring, useless for limited-stock drops.
-- **`/check` doesn't run instantly.** A command sent via Telegram is only *applied* at the next scheduled run (full or drain). For an on-demand check right now, trigger the workflow manually via `workflow_dispatch` — e.g. from the GitHub mobile app — with `mode: full`.
+- **Commands aren't applied the instant you send them** — they're picked up at the next drain run, which is every 15 minutes. `/check` itself does a real fetch immediately once picked up (it doesn't wait for the daily full scrape), so in practice you'll see a reply within about 15 minutes. For a check right now, trigger the workflow manually via `workflow_dispatch` — e.g. from the GitHub mobile app.
 - **Respect each retailer's ToS.** Polling a product page once a day is unremarkable, but some sites prohibit automated access outright, and sites behind heavy anti-bot infrastructure (Cloudflare Bot Management, DataDome, PerimeterX, Akamai) will 403 you regardless of politeness. Expect partial coverage — this bot does not attempt to defeat those systems. Smaller and mid-size retailers usually work fine with plain `httpx`; the heavy defenses cluster at the big names.
 - **Triage before committing to a watchlist.** Run each candidate URL through `/add` or `/watch` once and check `/status` before relying on it. `status` will tell you `ok`, `blocked` (bot detection or robots.txt), `needs_js` (client-rendered price, out of scope for this bot), or `failing` (transient errors).
 - **`page_diff` mode only catches multi-day sales.** At once-a-day cadence it will miss anything shorter — that's an accepted tradeoff, not a bug.

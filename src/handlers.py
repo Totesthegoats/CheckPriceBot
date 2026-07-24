@@ -164,7 +164,7 @@ def prompt_proxy_confirm(item: dict[str, Any], state: dict[str, Any], tg: Telegr
     if state.get("pending"):
         return
     state["pending"] = {"item_id": item["id"], "awaiting": "proxy_confirm", "created": now_iso()}
-    tg.send_message(
+    tg.broadcast(
         f"🚫 #{item['id']} · {item['label']} is blocked.\n"
         "Retry it through the proxy (uses your ScraperAPI quota)? Reply yes or no."
     )
