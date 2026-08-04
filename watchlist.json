@@ -1,4 +1,24 @@
 {
-  "items": [],
-  "next_id": 1
+  "items": [
+    {
+      "id": 1,
+      "mode": "price",
+      "url": "https://rightpricetiles.ie/product/tailored-alfie-bluetooth-mirror/",
+      "label": "https://rightpricetiles.ie/product/tailored-alfie-bluetooth-mirror/",
+      "selector": null,
+      "currency": "EUR",
+      "last_price": null,
+      "target_price": null,
+      "last_hash": null,
+      "paused": false,
+      "status": "failing",
+      "fail_count": 0,
+      "use_proxy": false,
+      "history": [],
+      "last_chart_sent": null,
+      "added": "2026-08-04T21:56:19.514656+00:00",
+      "last_checked": null
+    }
+  ],
+  "next_id": 2
 }
