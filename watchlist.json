@@ -59,7 +59,26 @@
       "last_chart_sent": "2026-08-20T08:55:26.708133+00:00",
       "added": "2026-08-04T21:56:19.514656+00:00",
       "last_checked": "2026-08-20T08:55:25.971336+00:00"
+    },
+    {
+      "id": 2,
+      "mode": "price",
+      "url": "https://www.next.ie/en/style/su742986/w49415?gclsrc=aw.ds&gad_source=1&gad_campaignid=11423785641&gbraid=0AAAAADn-_y8d4Ggs_th6ZkEFQn5oGlvYX",
+      "label": "https://www.next.ie/en/style/su742986/w49415?gclsrc=aw.ds&gad_source=1&gad_campaignid=11423785641&gbraid=0AAAAADn-_y8d4Ggs_th6ZkEFQn5oGlvYX",
+      "selector": null,
+      "currency": "EUR",
+      "last_price": null,
+      "target_price": null,
+      "last_hash": null,
+      "paused": false,
+      "status": "blocked",
+      "fail_count": 0,
+      "use_proxy": false,
+      "history": [],
+      "last_chart_sent": null,
+      "added": "2026-08-20T18:56:28.049754+00:00",
+      "last_checked": null
     }
   ],
-  "next_id": 2
+  "next_id": 3
 }
