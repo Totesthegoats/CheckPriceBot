@@ -11,8 +11,8 @@
       "target_price": null,
       "last_hash": null,
       "paused": false,
-      "status": "ok",
-      "fail_count": 0,
+      "status": "failing",
+      "fail_count": 1,
       "use_proxy": false,
       "history": [
         {
