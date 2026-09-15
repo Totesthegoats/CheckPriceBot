@@ -11,8 +11,8 @@
       "target_price": null,
       "last_hash": null,
       "paused": false,
-      "status": "failing",
-      "fail_count": 2,
+      "status": "ok",
+      "fail_count": 0,
       "use_proxy": false,
       "history": [
         {
@@ -122,11 +122,15 @@
         {
           "d": "2026-09-12",
           "p": 30700
+        },
+        {
+          "d": "2026-09-15",
+          "p": 30700
         }
       ],
       "last_chart_sent": "2026-08-20T08:55:26.708133+00:00",
       "added": "2026-08-04T21:56:19.514656+00:00",
-      "last_checked": "2026-09-12T12:09:36.077181+00:00"
+      "last_checked": "2026-09-15T13:31:44.945686+00:00"
     },
     {
       "id": 2,
