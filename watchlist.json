@@ -10,9 +10,9 @@
       "last_price": 24900,
       "target_price": null,
       "last_hash": null,
-      "paused": false,
+      "paused": true,
       "status": "failing",
-      "fail_count": 6,
+      "fail_count": 7,
       "use_proxy": false,
       "history": [
         {
